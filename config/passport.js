@@ -1,6 +1,7 @@
 const { Strategy: LocalStrategy } = require('passport-local');
 const { Strategy: JwtStrategy, ExtractJwt } = require('passport-jwt');
-const User = require('../models/user');
+const db = require('../models'); // if you have an index file in models directory
+const User = db.User;
 const bcrypt = require('bcryptjs');
 
 module.exports = (passport) => {

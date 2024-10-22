@@ -2,8 +2,10 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
-const User = require('../models/user');
-
+//const User = require('../models/user');
+const db = require('../models'); // Import the initialized models
+const User = db.User;
+const BlogController = require('../Controllers/BlogController');
 // Adjust path if necessary
 const router = express.Router();
 // Register a new user
@@ -29,6 +31,9 @@ router.post('/register', async (req, res) => {
 // Login user and generate JWT token
 router.post('/login', async (req, res, next) => {
     passport.authenticate('local', { session: false }, (err, user, info) => {
+        console.log('Auth error:', err);
+        console.log('Auth info:', info);
+        console.log('Authenticated user:', user);
         if (err || !user) {
             return res.status(400).json({
                 message: info ? info.message : 'Login failed',
@@ -50,4 +55,7 @@ router.post('/login', async (req, res, next) => {
 router.get('/current', passport.authenticate('jwt', { session: false }), (req, res) => {
     res.json({ user: req.user });
 });
+router.post('/addBlog', passport.authenticate('jwt', { session: false }), BlogController.create);
+router.get('/listBlogs', passport.authenticate('jwt', { session: false }), BlogController.getAll);
+
 module.exports = router;
